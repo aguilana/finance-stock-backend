@@ -25,6 +25,7 @@ export const login = async (
   try {
     // Check if email and password are provided
     const { email, password } = req.body;
+    console.log(email, password);
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
     }

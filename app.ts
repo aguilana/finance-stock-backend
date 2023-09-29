@@ -1,8 +1,9 @@
 import express, { Request, Response, NextFunction } from 'express';
 const app = express();
-const cors = require('cors');
+import cors from 'cors';
 import { CorsOptions } from 'cors';
-const morgan = require('morgan');
+import morgan from 'morgan';
+import dotenv from 'dotenv';
 require('dotenv').config();
 
 const whiteList = [process.env.LOCAL_URL, 'http://localhost:5173'];
@@ -25,18 +26,18 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', require('./api'));
 
-app.use('/', (req: Request, res: Response) => {
-  res.status(200).json({
-    title: 'Hello World!',
-    description:
-      'This is the backend for the finance stock app - auth access needed to advanced features',
-    code: 200,
-    data: null,
-    status: 'success',
-    timestamp: Date.now(),
-    version: '1.0.0',
-  });
-});
+// app.use('/', (req: Request, res: Response) => {
+//   res.status(200).json({
+//     title: 'Hello World!',
+//     description:
+//       'This is the backend for the finance stock app - auth access needed to advanced features',
+//     code: 200,
+//     data: null,
+//     status: 'success',
+//     timestamp: Date.now(),
+//     version: '1.0.0',
+//   });
+// });
 // error handling endware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err);
