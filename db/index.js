@@ -20,5 +20,9 @@ module.exports = {
     db,
     models: {
         User,
+        Transaction,
+        HistoricalPrice,
+        Stock,
+        UserPortfolios
     },
 };
