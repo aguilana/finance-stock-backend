@@ -36,6 +36,7 @@
 - `file1.ts`
 
 </details>
+<details>
 <summary> /utils </summary>
 
 - `file1.ts`
