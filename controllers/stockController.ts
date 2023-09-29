@@ -1,6 +1,6 @@
 // controllers/stockController.ts
-
 import { Request, Response } from 'express';
+import { Stock } from '../db';
 
 export const createStock = async (req: Request, res: Response) => {
   // Your logic for creating a stock

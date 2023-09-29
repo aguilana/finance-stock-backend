@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-const {
-  models: { HistoricalPrice },
-} = require('../db');
+import { HistoricalPrice } from '../db';
 
 // Logic to create a new historical price record
 export const createHistoricalPrice = async (

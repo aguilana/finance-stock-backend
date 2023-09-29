@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-const {
-  models: { Transaction },
-} = require('../db');
+import { Transaction } from '../db';
 export const createTransaction = async (
   req: Request,
   res: Response,

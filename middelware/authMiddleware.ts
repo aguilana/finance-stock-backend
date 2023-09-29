@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 const jwt = require('jsonwebtoken');
-const {
-  model: { User },
-} = require('../db');
+import { User } from '../db';
+// const {
+//   model: { User },
+// } = require('../db');
 import { AuthRequest } from './types';
 
 export const authenticate = async (

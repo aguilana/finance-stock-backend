@@ -1,13 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const { authenticate } = require('../middleware/authMiddleware');
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { authenticate } from '../middelware/authMiddleware';
+import { User } from '../db';
 
-const {
-  model: { User },
-} = require('../db');
-
-exports.signup = async (req: Request, res: Response, next: NextFunction) => {
+export const signup = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const user = await User.create(req.body);
     res.status(201).json({ user });
@@ -16,7 +17,11 @@ exports.signup = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-exports.login = async (req: Request, res: Response, next: NextFunction) => {
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     // Check if email and password are provided
     const { email, password } = req.body;
@@ -56,14 +61,27 @@ exports.login = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-exports.getUser = [
-  authenticate,
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const user = await User.findByPk(req.params.userId);
-      res.status(200).json({ user });
-    } catch (error) {
-      next(error);
-    }
-  },
-];
+export const getUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findByPk(req.params.userId);
+    res.status(200).json({ user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// export const getUser = [
+//   authenticate,
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//       const user = await User.findByPk(req.params.userId);
+//       res.status(200).json({ user });
+//     } catch (error) {
+//       next(error);
+//     }
+//   },
+// ];

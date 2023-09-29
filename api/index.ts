@@ -1,10 +1,11 @@
-const express = require('express');
+import express from 'express';
+import userRoutes from './userRoutes';
+import stockRoutes from './stockRoutes';
+import transactionRoutes from './transactionRoutes';
+import historicalPriceRoutes from './historicalPriceRoutes';
+import portfolioRoutes from './portfolioRoutes';
+
 const router = express.Router();
-const userRoutes = require('./userRoutes');
-const stockRoutes = require('./stockRoutes');
-const transactionRoutes = require('./transactionRoutes');
-const historicalPriceRoutes = require('./historicalPriceRoutes');
-const portfolioRoutes = require('./portfolioRoutes');
 
 router.use('/users', userRoutes);
 router.use('/stocks', stockRoutes);
