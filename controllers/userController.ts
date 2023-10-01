@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { authenticate } from '../middelware/authMiddleware';
 import { User } from '../db';
+import { AuthRequest } from '../middleware/types';
 
 export const signup = async (
   req: Request,
@@ -68,7 +68,8 @@ export const getUser = async (
   next: NextFunction
 ) => {
   try {
-    const user = await User.findByPk(req.params.userId);
+    const authReq = req as AuthRequest;
+    const user = await User.findByPk(authReq.params.userId);
     res.status(200).json({ user });
   } catch (error) {
     next(error);

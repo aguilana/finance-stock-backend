@@ -26,18 +26,19 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', require('./api'));
 
-// app.use('/', (req: Request, res: Response) => {
-//   res.status(200).json({
-//     title: 'Hello World!',
-//     description:
-//       'This is the backend for the finance stock app - auth access needed to advanced features',
-//     code: 200,
-//     data: null,
-//     status: 'success',
-//     timestamp: Date.now(),
-//     version: '1.0.0',
-//   });
-// });
+app.use('/', (req: Request, res: Response) => {
+  res.status(200).json({
+    title: 'Hello World!',
+    description:
+      'This is the backend for the finance stock app - auth access needed to advanced features',
+    code: 200,
+    data: null,
+    status: 'success',
+    timestamp: Date.now(),
+    version: '1.0.0',
+  });
+});
+
 // error handling endware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err);

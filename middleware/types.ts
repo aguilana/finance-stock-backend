@@ -1,7 +1,5 @@
 import { Request } from 'express';
-const {
-  model: { User },
-} = require('../db');
+import { User } from '../db';
 
 export interface AuthRequest extends Request {
   user: typeof User;
