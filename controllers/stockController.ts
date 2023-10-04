@@ -1,6 +1,7 @@
 // controllers/stockController.ts
 import { NextFunction, Request, Response } from 'express';
 import * as polygonService from '../services/polygonService';
+import { getNewsForStock } from '../services/newsService';
 
 export const createStock = async (req: Request, res: Response) => {
   // Your logic for creating a stock
@@ -28,10 +29,32 @@ export const getStock = async (
   }
 };
 
-export const updateStock = async (req: Request, res: Response) => {
+export const updateStock = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   // Your logic for updating a stock by ID
 };
 
-export const deleteStock = async (req: Request, res: Response) => {
+export const deleteStock = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   // Your logic for deleting a stock by ID
+};
+
+export const getNews = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const ticker = req.params.ticker;
+    const news = await getNewsForStock(ticker);
+    res.status(200).json({ news });
+  } catch (error) {
+    next(error);
+  }
 };
