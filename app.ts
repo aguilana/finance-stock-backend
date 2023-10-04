@@ -1,10 +1,9 @@
+require('dotenv').config();
 import express, { Request, Response, NextFunction } from 'express';
 const app = express();
 import cors from 'cors';
 import { CorsOptions } from 'cors';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
-require('dotenv').config();
 
 const whiteList = [process.env.LOCAL_URL, 'http://localhost:5173'];
 const corsOptions: CorsOptions = {

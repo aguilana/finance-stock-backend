@@ -1,6 +1,7 @@
 const PORT = process.env.PORT || 8080;
 const app = require('./app');
 const { db } = require('./db');
+import admin from './services/firebaseAdmin';
 
 const init = async () => {
   try {
