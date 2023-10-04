@@ -7,7 +7,7 @@ import UserPortfolios from '../db/models/UserPortfolios';
 
 // Dummy data
 const users = [
-  { username: 'johnDoe', email: 'john@example.com', password: 'password' },
+  { firstName: 'John', lastName: 'Doe', email: 'john@example.com' },
 ];
 
 const stocks = [{ symbol: 'AAPL', name: 'Apple Inc.' }];

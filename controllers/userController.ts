@@ -55,7 +55,7 @@ export const getUser = async (
   try {
     const authReq = req as AuthRequest;
     const user = await User.findOne({
-      where: { firebaseUID: authReq.params.firebaseId },
+      where: { firebaseUID: authReq.params.userId },
     });
     res.status(200).json({ user });
   } catch (error) {

@@ -1,11 +1,11 @@
 import express from 'express';
 import * as userController from '../controllers/userController';
-import authenticate from '../middleware/authMiddleware';
+import { authenticate, checkUserAccess } from '../middleware/authMiddleware';
 const router = express.Router();
 
 router.post('/signup', userController.signup);
 router.post('/login', userController.login);
-router.get('/:userId', authenticate, userController.getUser);
+router.get('/:userId', authenticate, checkUserAccess, userController.getUser);
 
 router.use('/', (req, res) => {
   res.status(404).json({

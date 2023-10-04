@@ -1,54 +1,59 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
-const jwt = require('jsonwebtoken');
 import { User } from '../db';
 import { AuthRequest } from './types';
+import admin from 'firebase-admin';
 
-const authenticate: RequestHandler = async (
+export const authenticate: RequestHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const authReq = req as AuthRequest; // Cast req to AuthRequest
+    const authorizationHeader = authReq.headers.authorization || '';
+    const token = authorizationHeader.split('Bearer ')[1];
 
-    const token = req.headers.authorization?.split(' ')[1]; // Assumes "Bearer TOKEN"
-    if (!token) return res.status(403).json({ error: 'No token provided' });
+    if (!token) {
+      return res
+        .status(401)
+        .send({ message: 'Authentication failed: No token provided.' });
+    }
 
-    const decoded: any = jwt.verify(
-      token,
-      process.env.JWT || 'your-secret-key'
-    );
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    const loggedInUser = await User.findOne({
+      where: { firebaseUID: decodedToken.uid },
+    });
 
-    const user = await User.findByPk(decoded.userId);
-    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+    if (!loggedInUser) {
+      return res
+        .status(401)
+        .send({ message: 'Authentication failed: User not found.' });
+    }
+    authReq.user = loggedInUser; // Attach the decoded token to the request
 
-    authReq.user = user; // Attach the user to the authReq object
     next();
   } catch (error) {
-    res.status(401).json({ error: 'Unauthorized' });
+    res.status(401).send({ message: 'Authentication failed.' });
   }
 };
-// const authenticate = async (
-//   req: AuthRequest,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   try {
-//     const token = req.headers.authorization?.split(' ')[1]; // Assumes "Bearer TOKEN"
-//     if (!token) return res.status(403).json({ error: 'No token provided' });
 
-//     const decoded: any = jwt.verify(
-//       token,
-//       process.env.JWT_SECRET || 'your-secret-key'
-//     );
+export const checkUserAccess = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const authReq = req as AuthRequest;
 
-//     const user = await User.findByPk(decoded.userId);
-//     if (!user) return res.status(401).json({ error: 'Unauthorized' });
+  if (!authReq.user) {
+    return res.status(401).send({ message: 'Unauthorized: User not found.' });
+  }
 
-//     req.user = user; // Attach the user to the request object
-//     next();
-//   } catch (error) {
-//     res.status(401).json({ error: 'Unauthorized' });
-//   }
-// };
-export default authenticate;
+  const { userId } = authReq.params;
+  const loggedInUserId = authReq.user.firebaseUID;
+
+  if (loggedInUserId !== parseInt(userId, 10)) {
+    return res.status(403).send({ message: 'Unauthorized: Access denied.' });
+  }
+
+  next();
+};
