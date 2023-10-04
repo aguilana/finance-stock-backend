@@ -11,7 +11,10 @@ const SALT_ROUNDS = 5;
 
 interface UserAttributes {
   email: string;
-  password: string;
+  password?: string; // Optional if you're not storing passwords
+  firstName: string;
+  lastName: string;
+  displayName: string;
 }
 
 const User = db.define('user', {
@@ -25,9 +28,22 @@ const User = db.define('user', {
     allowNull: false,
     unique: true,
   },
-  password: {
+  firebaseUID: {
     type: STRING,
     allowNull: false,
+    unique: true,
+  },
+  firstName: {
+    type: STRING,
+    allowNull: false,
+  },
+  lastName: {
+    type: STRING,
+    allowNull: false,
+  },
+  displayName: {
+    type: STRING,
+    allowNull: true, // Assuming the display name might be optional
   },
 });
 
@@ -81,19 +97,6 @@ User.findByToken = async function (token: string) {
       throw 'nooo';
     }
     return user;
-  } catch (ex) {
-    throw new CustomError('bad token', 401);
-  }
-};
-
-// social authentication
-User.authenticateViaSocial = async function (passportId: string) {
-  try {
-    const user = await this.findOne({ where: { passportId } });
-    if (!user) {
-      throw new CustomError('no users exist', 401);
-    }
-    return user.generateToken();
   } catch (ex) {
     throw new CustomError('bad token', 401);
   }

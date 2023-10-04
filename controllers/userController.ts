@@ -75,15 +75,3 @@ export const getUser = async (
     next(error);
   }
 };
-
-// export const getUser = [
-//   authenticate,
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//       const user = await User.findByPk(req.params.userId);
-//       res.status(200).json({ user });
-//     } catch (error) {
-//       next(error);
-//     }
-//   },
-// ];
