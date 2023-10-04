@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import { User } from '../db';
 import { AuthRequest } from '../middleware/types';
+import admin from 'firebase-admin';
 
 export const signup = async (
   req: Request,
@@ -23,40 +22,26 @@ export const login = async (
   next: NextFunction
 ) => {
   try {
-    // Check if email and password are provided
-    const { email, password } = req.body;
-    console.log(email, password);
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+    const { token } = req.body; // Firebase token sent from the frontend
+
+    if (!token) {
+      return res.status(400).json({ error: 'Firebase token is required' });
     }
 
-    // Find user by email
-    const user = await User.findOne({ where: { email } });
+    const firebaseUser = await admin.auth().verifyIdToken(token);
+    let user = await User.findOne({
+      where: { email: firebaseUser.email, firebaseUID: firebaseUser.uid },
+    });
+
     if (!user) {
-      return res
-        .status(401)
-        .json({ error: 'Credential error: Invalid email or password' });
+      user = await User.create({
+        email: firebaseUser.email,
+        firebaseUID: firebaseUser.uid,
+        // Add other user info as required
+      });
     }
 
-    // Check if the provided password is correct
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res
-        .status(401)
-        .json({ error: 'Credential error: Invalid email or password' });
-    }
-
-    // Create JWT
-    const token = jwt.sign(
-      { userId: user.id },
-      process.env.JWT_SECRET || 'your-secret-key',
-      {
-        expiresIn: '1d', // Token expires in 1 day
-      }
-    );
-
-    // Send token to the client
-    res.json({ token });
+    res.json({ user });
   } catch (error) {
     next(error);
   }
@@ -69,7 +54,9 @@ export const getUser = async (
 ) => {
   try {
     const authReq = req as AuthRequest;
-    const user = await User.findByPk(authReq.params.userId);
+    const user = await User.findOne({
+      where: { firebaseUID: authReq.params.firebaseId },
+    });
     res.status(200).json({ user });
   } catch (error) {
     next(error);
