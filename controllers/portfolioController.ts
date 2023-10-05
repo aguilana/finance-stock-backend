@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { UserPortfolios } from '../db';
+import { UserPortfolio } from '../db';
 
 export const createPortfolio = async (
   req: Request,
@@ -7,7 +7,7 @@ export const createPortfolio = async (
   next: NextFunction
 ) => {
   try {
-    const portfolio = await UserPortfolios.create(req.body);
+    const portfolio = await UserPortfolio.create(req.body);
     res.status(201).json(portfolio);
   } catch (error) {
     next(error);
@@ -21,7 +21,7 @@ export const getPortfolios = async (
 ) => {
   // Logic to get all portfolios
   try {
-    const portfolios = await UserPortfolios.findAll();
+    const portfolios = await UserPortfolio.findAll();
     res.status(200).json(portfolios);
   } catch (error) {
     next(error);
@@ -34,7 +34,7 @@ export const getPortfolio = async (
   next: NextFunction
 ) => {
   try {
-    const portfolio = await UserPortfolios.findByPk(req.params.portfolioId);
+    const portfolio = await UserPortfolio.findByPk(req.params.portfolioId);
     res.status(200).json(portfolio);
   } catch (error) {
     next(error);
@@ -47,7 +47,7 @@ export const updatePortfolio = async (
   next: NextFunction
 ) => {
   try {
-    const portfolio = await UserPortfolios.update(req.body, {
+    const portfolio = await UserPortfolio.update(req.body, {
       where: { id: req.params.portfolioId },
     });
     res.status(200).json(portfolio);
@@ -62,7 +62,7 @@ export const deletePortfolio = async (
   next: NextFunction
 ) => {
   try {
-    const portfolio = await UserPortfolios.destroy({
+    const portfolio = await UserPortfolio.destroy({
       where: { id: req.params.portfolioId },
     });
     res.status(200).json(portfolio);

@@ -2,7 +2,7 @@
 import { NextFunction, Request, Response } from 'express';
 import * as polygonService from '../services/polygonService';
 import { getNewsForStock } from '../services/newsService';
-import { Stock, User, UserPortfolios } from '../db';
+import { Stock, User, UserPortfolio } from '../db';
 import CustomError from '../utils/customError';
 
 export const createStock = async (
@@ -87,7 +87,7 @@ export const updateStock = async (
     const { quantity } = req.body;
 
     // First, find the user and the specific stock in their portfolio
-    const userStock = await UserPortfolios.findOne({
+    const userStock = await UserPortfolio.findOne({
       where: {
         userId: uid,
         stockId: stockId,
@@ -116,7 +116,7 @@ export const deleteStock = async (
     const uid = req.headers.uid as string;
     const { stockId } = req.params;
 
-    const userStock = await UserPortfolios.findOne({
+    const userStock = await UserPortfolio.findOne({
       where: {
         userId: uid,
         stockId: stockId,

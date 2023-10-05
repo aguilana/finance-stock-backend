@@ -1,13 +1,14 @@
 const PORT = process.env.PORT || 8080;
 const app = require('./app');
 const { db } = require('./db');
-import admin from './services/firebaseAdmin';
+import { seedAdmin } from './script/seedAdmin';
 
 const init = async () => {
   try {
     if (process.env.SEED === 'true') {
       console.log('Seeding database');
       //   await seed();
+      await seedAdmin();
     } else {
       // force true for development
       if (process.env.NODE_ENV !== 'development') {

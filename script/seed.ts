@@ -3,7 +3,7 @@ import User from '../db/models/User';
 import Stock from '../db/models/Stock';
 import Transaction from '../db/models/Transaction';
 import HistoricalPrice from '../db/models/HistoricalPrice';
-import UserPortfolios from '../db/models/UserPortfolios';
+import UserPortfolio from '../db/models/UserPortfolio';
 
 // Dummy data
 const users = [
@@ -34,7 +34,7 @@ const historicalPrices = [
   },
 ];
 
-const userPortfolios = [{ userId: 1, stockId: 1, quantity: 5 }];
+const userPortfolio = [{ userId: 1, stockId: 1, quantity: 5 }];
 
 /**
  * seed - this function clears the database, updates tables to
@@ -53,7 +53,7 @@ async function seed() {
     historicalPrices.map((price) => HistoricalPrice.create(price))
   );
   await Promise.all(
-    userPortfolios.map((portfolio) => UserPortfolios.create(portfolio))
+    userPortfolio.map((portfolio) => UserPortfolio.create(portfolio))
   );
 
   console.log('get all the magic methods---');
