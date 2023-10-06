@@ -4,4 +4,5 @@ node_modules
 data-analytics-finance-firebase-adminsdk-s3yh2-1bd6dbcea6.json
 
 /script/seedAdmin.ts
+/script/seedUsers.ts
 /script/seed.ts
