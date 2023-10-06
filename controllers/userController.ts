@@ -9,7 +9,30 @@ export const signup = async (
   next: NextFunction
 ) => {
   try {
-    const user = await User.create(req.body);
+    const { email, password, firstName, lastName } = req.body;
+
+    // Register the user using Firebase Auth
+    const firebaseUser = await admin.auth().createUser({
+      email,
+      password,
+      displayName: `${firstName} ${lastName}`,
+    });
+
+    if (!firebaseUser) {
+      return res
+        .status(400)
+        .json({ error: 'Failed to register with Firebase' });
+    }
+
+    // Add user to your database
+    const user = await User.create({
+      email: firebaseUser.email,
+      firebaseUID: firebaseUser.uid,
+      firstName,
+      lastName,
+      displayName: firebaseUser.displayName,
+    });
+
     res.status(201).json({ user });
   } catch (error) {
     next(error);
