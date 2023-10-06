@@ -1,7 +1,7 @@
 // db/models/User.js
 
 const Sequelize = require('sequelize');
-const { STRING, BOOLEAN } = Sequelize;
+const { STRING, BOOLEAN, INTEGER } = Sequelize;
 import db from '../db';
 // const jwt = require('jsonwebtoken');
 // const bcrypt = require('bcrypt');
@@ -9,6 +9,7 @@ import db from '../db';
 // const SALT_ROUNDS = 5;
 
 interface UserAttributes {
+  id: number;
   email: string;
   password?: string; // Optional if you're not storing passwords
   firstName: string;

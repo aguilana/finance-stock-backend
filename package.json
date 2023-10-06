@@ -6,8 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.ts",
+    "start:dev": "SEED=true nodemon index.ts",
     "build": "tsc",
-    "seed": "script/seed.ts",
+    "seed": "SEED=true ts-node script/seed.ts",
     "seedAdmin": "ts-node script/seedAdmin.ts",
     "compile": "tsc"
   },

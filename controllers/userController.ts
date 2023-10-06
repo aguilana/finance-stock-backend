@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { User } from '../db';
 import { AuthRequest } from '../middleware/types';
-import admin from 'firebase-admin';
+import admin from '../services/firebaseAdmin';
 
 export const signup = async (
   req: Request,

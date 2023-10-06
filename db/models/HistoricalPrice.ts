@@ -5,10 +5,10 @@ import db from '../db';
 const HistoricalPrice = db.define('historicalPrice', {
   stockId: {
     type: DataTypes.INTEGER,
-    references: {
-      model: 'stocks',
-      key: 'id',
-    },
+    // references: {
+    //   model: 'stocks',
+    //   key: 'id',
+    // },
     allowNull: false,
   },
   date: {
