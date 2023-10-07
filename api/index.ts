@@ -3,11 +3,13 @@ import userRoutes from './userRoutes';
 import stockRoutes from './stockRoutes';
 import transactionRoutes from './transactionRoutes';
 import historicalPriceRoutes from './historicalPriceRoutes';
+import authRoutes from './authRoutes';
 import portfolioRoutes from './portfolioRoutes';
 import CustomError from '../utils/customError';
 
 const router = express.Router();
 
+router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/stocks', stockRoutes);
 router.use('/transactions', transactionRoutes);

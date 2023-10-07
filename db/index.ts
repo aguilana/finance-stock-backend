@@ -7,6 +7,19 @@ import Stock from './models/Stock';
 import UserPortfolio from './models/UserPortfolio';
 
 // relations
+User.belongsToMany(Stock, {
+  as: 'clientPortfolio',
+  through: UserPortfolio,
+  foreignKey: 'userId',
+  otherKey: 'stockId',
+});
+Stock.belongsToMany(User, {
+  as: 'clientPortfolio',
+  through: UserPortfolio,
+  foreignKey: 'stockId',
+  otherKey: 'userId',
+});
+
 // db/models/User.js
 User.hasMany(Transaction);
 Transaction.belongsTo(User);
@@ -17,13 +30,6 @@ Transaction.belongsTo(Stock);
 
 Stock.hasMany(HistoricalPrice);
 HistoricalPrice.belongsTo(Stock);
-
-User.belongsToMany(Stock, {
-  through: UserPortfolio,
-});
-Stock.belongsToMany(User, {
-  through: UserPortfolio,
-});
 
 // User.hasMany(UserPortfolio);
 // UserPortfolio.belongsTo(User);

@@ -4,6 +4,7 @@ import * as polygonService from '../services/polygonService';
 import { getNewsForStock } from '../services/newsService';
 import { Stock, User, UserPortfolio } from '../db';
 import CustomError from '../utils/customError';
+import { AuthRequest, StockType } from '../middleware/types';
 
 export const createStock = async (
   req: Request,
@@ -39,10 +40,38 @@ export const getStocks = async (
   next: NextFunction
 ) => {
   try {
-    const uid = req.headers.uid as string;
-    const user = await User.findOne({ where: { uid }, include: [Stock] });
+    const authReq = req as AuthRequest;
+
+    const user = authReq.user;
     if (user) {
-      res.status(200).json(user.stocks); // Assuming user.stocks gets all stocks associated with the user
+      console.log('authReq.user -------------->', user);
+
+      const augmentedStocks: StockType[] = [];
+
+      // Use Promise.all to fetch data concurrently for all stocks
+      await Promise.all(
+        user.clientPortfolio.map(async (stock: StockType) => {
+          // Fetch the stock data for the current stock
+          const stockData = await polygonService.getStockData(stock.symbol);
+
+          // Add the latest price to the stock object (assuming the price field is named 'price' in the stockData)
+          stock.latestPrice = stockData.price; // Adjust the field name if different in the response
+
+          // Push the augmented stock object to the new array
+          console.log('----------------------------------------------');
+          console.log('stockData', stockData);
+          console.log('----------------------------------------------');
+
+          augmentedStocks.push(stock);
+        })
+      );
+
+      // Send the augmented stocks as the response
+      console.log('----------------------------------------------');
+      console.log('augmentedStocks', augmentedStocks);
+      console.log('----------------------------------------------');
+
+      res.status(200).json(augmentedStocks); // Assuming user.stocks gets all stocks associated with the user
     } else {
       throw new Error('User not found.');
     }

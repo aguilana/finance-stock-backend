@@ -35,6 +35,11 @@ export const getStockData = async (symbol: string) => {
         apiKey: process.env.POLYGON_API_KEY,
       },
     });
+
+    console.log('----------------------------------------------');
+    console.log('RESPONSE DATA IN getStockData', response.data);
+    console.log('----------------------------------------------');
+
     return response.data;
   } catch (error) {
     throw error;
