@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { User } from '../db';
+import { User, UserPortfolio } from '../db';
 
 export interface AuthRequest extends Request {
   user: typeof User;
@@ -20,4 +20,5 @@ export interface StockType {
   changeOverTime: number;
   changeOverTimePercent: number;
   highestPrice: number;
+  userPortfolio: typeof UserPortfolio;
 }

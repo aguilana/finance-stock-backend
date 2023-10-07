@@ -44,7 +44,9 @@ export const getStocks = async (
 
     const user = authReq.user;
     if (user) {
+      console.log('----------------------------------------------');
       console.log('authReq.user -------------->', user);
+      console.log('----------------------------------------------');
 
       const augmentedStocks: StockType[] = [];
 
