@@ -1,16 +1,20 @@
 import { db } from '../db';
+import fs from 'fs';
 import Stock from '../db/models/Stock';
 import Transaction from '../db/models/Transaction';
 import HistoricalPrice from '../db/models/HistoricalPrice';
 import UserPortfolio from '../db/models/UserPortfolio';
+import path from 'path';
+const stocksFilePath = path.join(__dirname, 'stocks.json');
+const stocksData = JSON.parse(fs.readFileSync(stocksFilePath, 'utf-8'));
 
 import {
   seedUsers,
   users,
-  stocks,
-  transactions,
-  historicalPrices,
-  userPortfolio,
+  // stocks,
+  // transactions,
+  // historicalPrices,
+  // userPortfolio,
 } from './seedUsers';
 
 /**
@@ -22,16 +26,32 @@ async function seed() {
   await db.sync({ force: true }); // clears db and matches models to tables
   await seedUsers(users);
 
-  await Promise.all(stocks.map((stock) => Stock.create(stock)));
-  await Promise.all(
-    transactions.map((transaction) => Transaction.create(transaction))
-  );
-  await Promise.all(
-    historicalPrices.map((price) => HistoricalPrice.create(price))
-  );
-  await Promise.all(
-    userPortfolio.map((portfolio) => UserPortfolio.create(portfolio))
-  );
+  // const stocksData = JSON.parse(fs.readFileSync(stocksJson, 'utf-8'));
+  for (let stock of stocksData) {
+    try {
+      await Stock.create({
+        symbol: stock.symbol,
+        name: stock.name,
+        // Add any other default fields if necessary
+      });
+      console.log(`created stock: ${stock.symbol}`);
+    } catch (error) {
+      console.error(
+        `Failed to add stock: ${stock.symbol}. Error: ${(error as any).message}`
+      );
+    }
+  }
+
+  // await Promise.all(stocks.map((stock) => Stock.create(stock)));
+  // await Promise.all(
+  //   transactions.map((transaction) => Transaction.create(transaction))
+  // );
+  // await Promise.all(
+  //   historicalPrices.map((price) => HistoricalPrice.create(price))
+  // );
+  // await Promise.all(
+  //   userPortfolio.map((portfolio) => UserPortfolio.create(portfolio))
+  // );
 
   console.log('db synced!');
 }

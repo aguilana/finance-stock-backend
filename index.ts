@@ -10,13 +10,13 @@ const init = async () => {
       console.log('Seeding database');
       await seed();
     } else {
-      // force true for development
-      if (process.env.NODE_ENV !== 'development') {
-        await db.sync();
-      } else {
-        console.log('in development mode');
-        await db.sync();
-      }
+      console.log(
+        process.env.NODE_ENV === 'development'
+          ? '--- dev mode ---'
+          : '--- prod mode ---'
+      );
+      await db.sync();
+      console.log('--- db synced ---');
     }
     // start listening (and create a 'server' object representing our server)
     console.log('--- db synced ---');

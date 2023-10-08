@@ -34,6 +34,16 @@ export const createStock = async (
   }
 };
 
+export const listStocks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const allStocks = await Stock.findAll();
+  console.log(allStocks);
+  res.status(200).json(allStocks);
+};
+
 export const getStocks = async (
   req: Request,
   res: Response,

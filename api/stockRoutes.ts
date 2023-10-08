@@ -7,6 +7,7 @@ const router = express.Router();
 // Define your routes here
 router.post('/', stockController.createStock); // Create a new stock
 router.get('/', authenticate, stockController.getStocks); // Retrieve all stocks
+router.get('/list', stockController.listStocks);
 router.get('/:symbol', stockController.getStock); // Retrieve a single stock by ID
 router.get('/news/:ticker', stockController.getNews); // Retrieve news for a stock
 router.put('/:stockId', stockController.updateStock); // Update a stock by ID
