@@ -66,9 +66,12 @@ export const getHistoricalPrice = async (
   next: NextFunction
 ) => {
   try {
-    const historicalPrice = await HistoricalPrice.findByPk(
-      req.params.historicalPriceId
-    );
+    const { symbolId } = req.params;
+    const historicalPrice = await HistoricalPrice.findOne({
+      where: {
+        symbol: symbolId,
+      },
+    });
     res.status(200).json(historicalPrice);
   } catch (error) {
     next(error);

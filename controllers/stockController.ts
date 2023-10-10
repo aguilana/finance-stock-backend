@@ -2,46 +2,71 @@
 import { NextFunction, Request, Response } from 'express';
 import * as polygonService from '../services/polygonService';
 import { getNewsForStock } from '../services/newsService';
-import { Stock, User, UserPortfolio } from '../db';
+import { Stock, User, UserPortfolio, HistoricalPrice } from '../db';
 import CustomError from '../utils/customError';
 import { AuthRequest, StockType } from '../middleware/types';
 
-export const createStock = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const uid = req.headers.uid as string;
-    const { symbol, name } = req.body;
+// export const createStock = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     const uid = req.headers.uid as string;
+//     const { symbol, name } = req.body;
 
-    let stock = await Stock.findOne({ where: { symbol } });
-    if (!stock) {
-      stock = await Stock.create({ symbol, name });
-    }
+//     let stock = await Stock.findOne({ where: { symbol } });
+//     if (!stock) {
+//       stock = await Stock.create({ symbol, name });
+//     }
 
-    const user = await User.findOne({ where: { id: uid } });
-    if (!user) {
-      throw new CustomError('User not found', 404);
-    }
+//     const user = await User.findOne({ where: { id: uid } });
+//     if (!user) {
+//       throw new CustomError('User not found', 404);
+//     }
 
-    await user.addStock(stock);
-    res
-      .status(201)
-      .json({ message: `Stock (${symbol}) added to user profile` });
-  } catch (error) {
-    next(error);
-  }
-};
+//     await user.addStock(stock);
+//     res
+//       .status(201)
+//       .json({ message: `Stock (${symbol}) added to user profile` });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+// export const listStocks = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   const allStocks = await Stock.findAll();
+//   console.log(allStocks);
+//   res.status(200).json(allStocks);
+// };
 
 export const listStocks = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const allStocks = await Stock.findAll();
-  console.log(allStocks);
-  res.status(200).json(allStocks);
+  const stocks = await Stock.findAll({
+    include: {
+      model: HistoricalPrice,
+      limit: 1,
+      order: [['date', 'DESC']],
+    },
+  });
+  console.log('first stock', stocks[0]);
+  console.log('first stocks historical price', stocks[0].historicalPrices[0]);
+  const latestPrices = stocks.map((stock: typeof Stock) => ({
+    symbol: stock.symbol,
+    name: stock.name,
+    latestPrice: stock.historicalPrices.length
+      ? stock.historicalPrices[0].latestPrice
+      : 0,
+  }));
+
+  res.status(200).json(latestPrices);
 };
 
 export const getStocks = async (
@@ -122,29 +147,49 @@ export const updateStock = async (
   res: Response,
   next: NextFunction
 ) => {
+  const { stockSymbol } = req.params;
+  // Validate the incoming data
+  if (
+    !req.body ||
+    !req.body.name ||
+    !req.body.latestPrice ||
+    !req.body.symbol ||
+    !req.body.volume ||
+    !req.body.open
+  ) {
+    return res.status(400).send({ message: 'Invalid stock data provided.' });
+  }
   try {
-    const uid = req.headers.uid as string;
-    const { stockId } = req.params;
-    const { quantity } = req.body;
+    // Find the stock by its symbol and update it
+    const stock = await Stock.findOne({ where: { symbol: stockSymbol } });
 
-    // First, find the user and the specific stock in their portfolio
-    const userStock = await UserPortfolio.findOne({
-      where: {
-        userId: uid,
-        stockId: stockId,
-      },
+    console.log('stock', stock);
+    console.log({ reqBody: req.body });
+
+    if (!stock) {
+      return res.status(404).send({ message: 'Stock not found.' });
+    }
+
+    await HistoricalPrice.create({
+      stockId: stock?.id,
+      date: new Date(),
+      latestPrice: req.body.latestPrice,
+      volume: req.body.volume,
+      open: req.body.open,
+      // close: stock?.close,
+      // high: stock?.high,
+      // low: stock?.low,
+      // change: stock?.change,
+      // changePercent: stock?.changePercent,
+      // changeOverTime: stock?.changeOverTime,
+      // changeOverTimePercent: stock?.changeOverTimePercent,
+      // highestPrice: stock?.highestPrice,
     });
 
-    // If the stock exists for the user, update the quantity
-    if (userStock) {
-      userStock.quantity = quantity;
-      await userStock.save();
-      res.status(200).json(userStock);
-    } else {
-      throw new Error('Stock not found for user.');
-    }
+    res.send({ message: 'Stock updated successfully.', stock });
   } catch (error) {
-    next(error);
+    console.error('Error updating stock:', error);
+    res.status(500).send({ message: 'Internal server error.' });
   }
 };
 
