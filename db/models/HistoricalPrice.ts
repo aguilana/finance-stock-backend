@@ -49,9 +49,6 @@ const HistoricalPrice = db.define('historicalPrice', {
   changeOverTimePercent: {
     type: DataTypes.FLOAT,
   },
-  highestPrice: {
-    type: DataTypes.FLOAT,
-  },
 });
 
 export default HistoricalPrice;

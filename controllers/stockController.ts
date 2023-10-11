@@ -163,9 +163,6 @@ export const updateStock = async (
     // Find the stock by its symbol and update it
     const stock = await Stock.findOne({ where: { symbol: stockSymbol } });
 
-    console.log('stock', stock);
-    console.log({ reqBody: req.body });
-
     if (!stock) {
       return res.status(404).send({ message: 'Stock not found.' });
     }
@@ -176,17 +173,16 @@ export const updateStock = async (
       latestPrice: req.body.latestPrice,
       volume: req.body.volume,
       open: req.body.open,
-      // close: stock?.close,
-      // high: stock?.high,
-      // low: stock?.low,
+      close: req.body.close,
+      high: req.body.high,
+      low: req.body.low,
       // change: stock?.change,
       // changePercent: stock?.changePercent,
       // changeOverTime: stock?.changeOverTime,
       // changeOverTimePercent: stock?.changeOverTimePercent,
-      // highestPrice: stock?.highestPrice,
     });
 
-    res.send({ message: 'Stock updated successfully.', stock });
+    res.send({ message: 'Stock updated successfully.', stock: stock.symbol });
   } catch (error) {
     console.error('Error updating stock:', error);
     res.status(500).send({ message: 'Internal server error.' });
