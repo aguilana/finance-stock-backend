@@ -172,6 +172,7 @@ export const updateStock = async (
       date: new Date(),
       latestPrice: req.body.latestPrice,
       volume: req.body.volume,
+      marketCap: req.body.marketCap,
       open: req.body.open,
       close: req.body.close,
       high: req.body.high,
