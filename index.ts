@@ -1,13 +1,16 @@
 const PORT = process.env.PORT || 8080;
 const app = require('./app');
 const { db } = require('./db');
-import { seed, runSeed } from './script/seed';
+import { seed } from './script/seed';
 import { seedAdmin } from './script/seedAdmin';
 console.log('seed?', process.env.SEED);
 const init = async () => {
   try {
-    if (process.env.SEED === 'true') {
-      console.log('Seeding database');
+    if (process.env.SEED_ADMIN === 'true') {
+      console.log('seeding admin...');
+      await seedAdmin();
+    } else if (process.env.SEED === 'true') {
+      console.log('Seeding database...');
       await seed();
     } else {
       console.log(

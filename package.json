@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.ts",
-    "start:dev": "SEED=true nodemon index.ts",
+    "start:dev": "nodemon index.ts",
+    "start:seed": "SEED=true nodemon index.ts",
+    "start:admin": "SEED_ADMIN=true nodemon index.ts",
     "build": "tsc",
     "seed": "SEED=true ts-node script/seed.ts",
     "seedAdmin": "ts-node script/seedAdmin.ts",
